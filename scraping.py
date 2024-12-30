@@ -28,7 +28,7 @@ def scrape_datasets_and_benchmarks_papers(url):
         print(f"Failed to fetch {url} (status code: {response.status_code})")
         return []
 
-# Function to scrape specific rounds (round1 or round2) from the extra URL
+
 def scrape_round_papers(url):
     response = requests.get(url)
     if response.status_code == 200:
@@ -38,7 +38,9 @@ def scrape_round_papers(url):
         # Extract paper titles and links
         paper_list = []
         for paper in papers:
-            title = paper.a['title'].strip() if paper.a and paper.a.has_attr('title') else paper.text.strip()
+            # Extract the actual title from the visible text of the <a> tag
+            title = paper.a.text.strip() if paper.a else paper.text.strip()
+            print("title", title)  # Debugging line to check the extracted title
             link = paper.a['href'] if paper.a else None
             paper_list.append((title, link))
         return paper_list
