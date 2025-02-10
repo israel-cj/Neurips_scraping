@@ -5,7 +5,8 @@ import pickle
 # List of URLs to scrape
 urls = [
     "https://papers.nips.cc/paper/2022",
-    "https://papers.nips.cc/paper/2023"
+    "https://papers.nips.cc/paper/2023",
+    "https://papers.nips.cc/paper/2024",
 ]
 
 extra_url = "https://datasets-benchmarks-proceedings.neurips.cc/paper/2021"
@@ -16,7 +17,8 @@ def scrape_datasets_and_benchmarks_papers(url):
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         # Find all list items with the class 'datasets_and_benchmarks'
-        papers = soup.find_all('li', class_='datasets_and_benchmarks')
+        # papers = soup.find_all('li', class_='datasets_and_benchmarks')
+        papers = soup.find_all('li', class_=['datasets_and_benchmarks', 'datasets_and_benchmarks_track'])
         # Extract paper titles and links
         paper_list = []
         for paper in papers:
@@ -29,6 +31,7 @@ def scrape_datasets_and_benchmarks_papers(url):
         return []
 
 
+# Function to scrape specific rounds (round1 or round2) from the extra URL
 def scrape_round_papers(url):
     response = requests.get(url)
     if response.status_code == 200:
@@ -55,14 +58,15 @@ for url in urls:
     papers = scrape_datasets_and_benchmarks_papers(url)
     all_papers.extend(papers)
 
-print("all_papers", all_papers)
-
 # Scrape the extra URL for round1 and round2 papers
 round_papers = scrape_round_papers(extra_url)
+print("round_papers", round_papers)
 all_papers.extend(round_papers)
 
+# Debugging line to check the extracted papers
+breakpoint()
 
-print("round_papers", round_papers)
+print("all_papers", all_papers)
 
 # Display the results
 print("Datasets and Benchmarks Papers:")
